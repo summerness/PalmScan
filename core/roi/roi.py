@@ -10,7 +10,6 @@ class ROI(object):
         self.contourSkin = contourSkin
         self.skin = skin
 
-
     def calK(self,p0,p1):
         if p0[0] == p1[0]:
             return 2
@@ -21,10 +20,10 @@ class ROI(object):
 
 
     def roi(self,contour,userName):
-
+        global ImagePath
         ImagePath = "../../image/{}.jpg".format(userName)
+        global UserName
         UserName = ImagePath.replace(".jpg", "").replace(".jpeg", "").replace(".png", "")
-
         points = []
         img_rows, img_cols, _ = self.contour.shape
         hull = cv2.convexHull(contour, returnPoints=False)
@@ -36,11 +35,11 @@ class ROI(object):
             far = tuple(contour[f][0])
             number = f
             while self.calK(contour[number - 1, 0], contour[number, 0]) < 1:
-                number -= 3
+                number -= 5
             right = number
             number = f
             while self.calK(contour[number, 0], contour[number + 1, 0]) < 1:
-                number += 3
+                number += 5
             left = number
             points.append(tuple(contour[left, 0]))
             points.append(tuple(contour[right, 0]))
@@ -49,7 +48,47 @@ class ROI(object):
             cv2.circle(self.contourSkin, tuple(contour[right][0]), 5, [0, 255, 255], -1)
 
         cv2.imwrite("{0}_contour_anchor.jpg".format(UserName), contourSkin)
-        showImage(contourSkin)
+        self.points = sorted(points, key=lambda x: x[0])
+
+    def roi_main(self):
+        x_max = self.points[0][1]
+        y_min = self.points[0][1]
+        y_max = self.points[0][1]
+        x_min = self.points[0][0]
+
+        for each in self.points:
+            y = each[1]
+            x = each[0]
+            if y <= y_min:
+                y_min = y
+            if x <= x_min:
+                x_min = x
+            if x >= x_max:
+                x_max = x
+            if y >= y_max:
+                y_max = y
+
+        top_left = (x_min, y_min)
+        bottom_right = (x_max,y_max)
+        cv2.rectangle(self.contourSkin,top_left, bottom_right,(255,255,0),3)
+        cv2.imwrite("{0}_roi_main.jpg".format(UserName), self.contourSkin)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -60,3 +99,4 @@ if __name__ == '__main__':
     ct,skin, contour, contourSkin = c.drawContour()
     r = ROI(contour,skin,contourSkin)
     r.roi(ct,userName)
+    r.roi_main()
