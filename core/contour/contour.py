@@ -24,6 +24,7 @@ class Contour(object):
 
     def drawContour(self):
         skin,opening = self.cutSkin()
+        skinc = skin.copy()
         _, black_and_white = cv2.threshold(opening, 127, 255, 0)
         contours, _ = cv2.findContours(black_and_white, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         length = len(contours)
@@ -42,7 +43,7 @@ class Contour(object):
             cv2.imwrite("{0}_contour.jpg".format(self.UserName), final_Contour)
             contourSkin = cv2.drawContours(skin, [largest_contour], 0, (0, 255, 0), 10)
             cv2.imwrite("{0}_contour_skin.jpg".format(self.UserName), skin)
-            return largest_contour, skin,contour,contourSkin
+            return largest_contour, skinc,contour,contourSkin
 
 
 
