@@ -53,6 +53,9 @@ class MainFeature(object):
         # _,thresh1=cv2.threshold(roi_main_blurred,90,255,cv2.THRESH_BINARY)
         # showImage(thresh1)
 
+
+
+
     def compute_crossing_number(self,values):
         return np.count_nonzero(values < np.roll(values, -1))
 

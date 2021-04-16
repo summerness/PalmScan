@@ -2,11 +2,10 @@ import cv2
 import numpy as np
 
 
-
 class Contour(object):
-    def __init__(self,UserName):
+    def __init__(self, UserName):
         self.ImagePath = "../../image/{}.jpg".format(UserName)
-        self.UserName = self.ImagePath.replace(".jpg","").replace(".jpeg","").replace(".png","")
+        self.UserName = self.ImagePath.replace(".jpg", "").replace(".jpeg", "").replace(".png", "")
         self.img = cv2.imread(self.ImagePath)
 
     # 某些论文中提及的简单方式提取，也可使用别的优化
@@ -23,7 +22,7 @@ class Contour(object):
         return skin, opening
 
     def drawContour(self):
-        skin,opening = self.cutSkin()
+        skin, opening = self.cutSkin()
         skinc = skin.copy()
         _, black_and_white = cv2.threshold(opening, 127, 255, 0)
         contours, _ = cv2.findContours(black_and_white, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -39,12 +38,11 @@ class Contour(object):
                     maxArea = area
                     ci = i
             largest_contour = contours[ci]
-            contour = cv2.drawContours(final_Contour, [largest_contour], 0, (0, 255, 0), 10)
+            contour = cv2.drawContours(final_Contour, [largest_contour], 0, (0, 255, 0), 3)
             cv2.imwrite("{0}_contour.jpg".format(self.UserName), final_Contour)
-            contourSkin = cv2.drawContours(skin, [largest_contour], 0, (0, 255, 0), 10)
+            contourSkin = cv2.drawContours(skin, [largest_contour], 0, (0, 255, 0), 3)
             cv2.imwrite("{0}_contour_skin.jpg".format(self.UserName), skin)
-            return largest_contour, skinc,contour,contourSkin
-
+            return largest_contour, skinc, contour, contourSkin
 
 
 if __name__ == '__main__':
