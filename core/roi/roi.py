@@ -2,6 +2,7 @@ import cv2
 from core.contour.contour import Contour
 from core.tools import *
 import numpy as np
+from settings.setting import API_IMG_PATH
 
 
 class ROI(object):
@@ -18,11 +19,11 @@ class ROI(object):
         k = (p1[1] - p0[1]) / (p1[0] - p0[0])
         return k
 
-    def roi(self, contour, userName):
+    def roi(self, contour, ImageName):
         global ImagePath
-        ImagePath = "../../image/{}.jpg".format(userName)
-        global UserName
-        UserName = ImagePath.replace(".jpg", "").replace(".jpeg", "").replace(".png", "")
+        ImagePath = "{}/{}.jpg".format(API_IMG_PATH, ImageName)
+        global ImgSavePath
+        ImgSavePath = ImagePath.replace(".jpg", "")
         points = []
         img_rows, img_cols, _ = self.contour.shape
         hull = cv2.convexHull(contour, returnPoints=False)
@@ -45,7 +46,7 @@ class ROI(object):
             cv2.circle(self.contour, far, 5, [0, 0, 255], -1)
             cv2.circle(self.contourSkin, tuple(contour[left][0]), 5, [255, 255, 255], -1)
             cv2.circle(self.contourSkin, tuple(contour[right][0]), 5, [0, 255, 255], -1)
-        cv2.imwrite("{0}_contour_anchor.jpg".format(UserName), contourSkin)
+        cv2.imwrite("{0}_contour_anchor.jpg".format(ImgSavePath), contourSkin)
         self.points = points
         x = []
         y = []
@@ -70,20 +71,20 @@ class ROI(object):
         bottom_right = (x_max, y_max)
         scp = self.contourSkin.copy()
         cv2.rectangle(scp, top_left, bottom_right, (255, 255, 0), 3)
-        cv2.imwrite("{0}_roi_main.jpg".format(UserName), scp)
+        cv2.imwrite("{0}_roi_main.jpg".format(ImgSavePath), scp)
         out = self.skin.copy()[top_left[1]:bottom_right[1], top_left[0]:bottom_right[0], :]
-        cv2.imwrite("{0}_roi_main_out.jpg".format(UserName), out)
+        cv2.imwrite("{0}_roi_main_out.jpg".format(ImgSavePath), out)
         self.main_point = [top_left, bottom_right]
 
     def roi_thenar(self):
         top_left = (min(self.x) + 7, max(self.y) + 7)
         bottom_right = (
-        int((self.main_point[1][0] - self.main_point[0][0]) / 2) + self.main_point[0][0], self.main_point[1][1])
+            int((self.main_point[1][0] - self.main_point[0][0]) / 2) + self.main_point[0][0], self.main_point[1][1])
         scp = self.contourSkin.copy()
         cv2.rectangle(scp, top_left, bottom_right, (0, 255, 0), 3)
-        cv2.imwrite("{0}_roi_thenar.jpg".format(UserName), scp)
+        cv2.imwrite("{0}_roi_thenar.jpg".format(ImgSavePath), scp)
         out = self.skin.copy()[top_left[1]:bottom_right[1], top_left[0]:bottom_right[0], :]
-        cv2.imwrite("{0}_roi_thenar_out.jpg".format(UserName), out)
+        cv2.imwrite("{0}_roi_thenar_out.jpg".format(ImgSavePath), out)
 
     def roi_5(self):
         p1 = p2 = (0, 0)
@@ -92,44 +93,16 @@ class ROI(object):
                 p1 = each
             if each[0] == self.x[4]:
                 p2 = each
-        y = self.main_point[1][1]
+        y = int((self.main_point[1][1] - self.main_point[0][1]) / 2 + self.main_point[0][1])
         center_x = ((self.main_point[1][0] - self.main_point[0][0]) / 2 + self.main_point[0][0])
         x1 = int(center_x * 0.875)
         x2 = int(center_x * 1.125)
-        p3 = (x1,y)
-        p4 = (x2,y)
-        p = np.array([p1,p2,p4,p3],np.int32)
+        p3 = (x1, y)
+        p4 = (x2, y)
+        p = np.array([p1, p2, p4, p3], np.int32)
         scp = self.contourSkin.copy()
         cv2.polylines(scp, [p], True, (0, 255, 255), 3)
-        cv2.imwrite("{0}_roi_5.jpg".format(UserName), scp)
-        mask = np.zeros(self.skin.copy().shape, dtype=np.uint8)
-        mask2 = cv2.fillPoly(mask, [p], (255, 255, 255))
-        out = cv2.bitwise_and(self.skin.copy(),mask2)
-        xp = []
-        yp = []
-        for each in [p1,p2,p4,p3]:
-          xp.append(each[0])
-          yp.append(each[1])
-        out1= self.skin.copy()[min(yp):max(yp),min(xp):max(xp), :]
-        cv2.imwrite("{0}_roi_5_out.jpg".format(UserName), out1)
-
-    def roi_small_thenar(self):
-        x = 0
-        for each in self.points:
-            if each[0] == self.x[5]:
-                x = each[0]
-        y = self.main_point[0][1]
-        p1 = (x,y)
-        p2 = (self.main_point[1][0],self.main_point[0][1])
-        p3 = self.main_point[1]
-        y = self.main_point[1][1]
-        center_x = ((self.main_point[1][0] - self.main_point[0][0]) / 2 + self.main_point[0][0])
-        x1 = int(center_x * 0.875)
-        p4 = (x1,y)
-        p = np.array([p1, p2, p3, p4], np.int32)
-        scp = self.contourSkin.copy()
-        cv2.polylines(scp, [p], True, (0, 255, 255), 3)
-        cv2.imwrite("{0}_roi_small_thenar.jpg".format(UserName), scp)
+        cv2.imwrite("{0}_roi_5.jpg".format(ImgSavePath), scp)
         mask = np.zeros(self.skin.copy().shape, dtype=np.uint8)
         mask2 = cv2.fillPoly(mask, [p], (255, 255, 255))
         out = cv2.bitwise_and(self.skin.copy(), mask2)
@@ -139,7 +112,35 @@ class ROI(object):
             xp.append(each[0])
             yp.append(each[1])
         out1 = self.skin.copy()[min(yp):max(yp), min(xp):max(xp), :]
-        cv2.imwrite("{0}_roi_small_thenar_out.jpg".format(UserName), out1)
+        cv2.imwrite("{0}_roi_5_out.jpg".format(ImgSavePath), out1)
+
+    def roi_small_thenar(self):
+        x = 0
+        for each in self.points:
+            if each[0] == self.x[5]:
+                x = each[0]
+        y = self.main_point[0][1]
+        p1 = (x, y)
+        p2 = (self.main_point[1][0], self.main_point[0][1])
+        p3 = self.main_point[1]
+        y = self.main_point[1][1]
+        center_x = ((self.main_point[1][0] - self.main_point[0][0]) / 2 + self.main_point[0][0])
+        x1 = int(center_x * 0.875)
+        p4 = (x1, y)
+        p = np.array([p1, p2, p3, p4], np.int32)
+        scp = self.contourSkin.copy()
+        cv2.polylines(scp, [p], True, (0, 255, 255), 3)
+        cv2.imwrite("{0}_roi_small_thenar.jpg".format(ImgSavePath), scp)
+        mask = np.zeros(self.skin.copy().shape, dtype=np.uint8)
+        mask2 = cv2.fillPoly(mask, [p], (255, 255, 255))
+        out = cv2.bitwise_and(self.skin.copy(), mask2)
+        xp = []
+        yp = []
+        for each in [p1, p2, p4, p3]:
+            xp.append(each[0])
+            yp.append(each[1])
+        out1 = self.skin.copy()[min(yp):max(yp), min(xp):max(xp), :]
+        cv2.imwrite("{0}_roi_small_thenar_out.jpg".format(ImgSavePath), out1)
 
     def roi_7(self):
         y_min = 0
@@ -149,30 +150,20 @@ class ROI(object):
                 y_max = each[1]
             if each[0] == self.x[6]:
                 y_min = each[1]
-        top_left = (self.x[5],y_min)
-        bottom_right = (self.x[6],y_max)
+        top_left = (self.x[5], y_min)
+        bottom_right = (self.x[6], y_max)
         scp = self.contourSkin.copy()
         cv2.rectangle(scp, top_left, bottom_right, (255, 255, 0), 3)
-        cv2.imwrite("{0}_roi_7.jpg".format(UserName), scp)
+        cv2.imwrite("{0}_roi_7.jpg".format(ImgSavePath), scp)
         out = self.skin.copy()[top_left[1]:bottom_right[1], top_left[0]:bottom_right[0], :]
-        cv2.imwrite("{0}_roi_7_out.jpg".format(UserName), out)
+        cv2.imwrite("{0}_roi_7_out.jpg".format(ImgSavePath), out)
         self.main_point = [top_left, bottom_right]
-
 
     def roi9(self):
         pass
 
     def roi10(self):
         pass
-
-
-
-
-
-
-
-
-
 
     def roi_10(self):
         x_min = self.points[2][0]

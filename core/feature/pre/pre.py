@@ -34,27 +34,91 @@ def sobel_demo(image):
     # dst = cv2.bitwise_not(grad_x)
     # blur = cv2.blur(dst, (1, 1))
     _, thresh1 = cv2.threshold(grad_x, 127, 255, cv2.THRESH_BINARY)
-    showImage(thresh1)
+    # showImage(thresh1)
     nccomps  = cv2.connectedComponentsWithStats(thresh1)
     stats = nccomps[2]
     for istat in stats:
         if istat[4] < 100:
             cv2.rectangle(grad_x, tuple(istat[0:2]), tuple(istat[0:2] + istat[2:4]), 0, thickness=-1)  # 26
-
-
-
-
-
     showImage(grad_x)
+    kernel = np.ones((3, 3), np.uint8)
+    cv2.morphologyEx(grad_x,  cv2.MORPH_CLOSE, kernel)
+    # showImage(grad_x)
+    fix_grad = fix(grad_x)
+    getLen(fix_grad)
+
+## 修复线条
+
+def compute_crossing_number(values):
+    return np.count_nonzero(values < np.roll(values, -1))
+
+def  fix(img):
+    img_line = cv2.ximgproc.thinning(img, thinningType=cv2.ximgproc.THINNING_GUOHALL)
+    all_8_neighborhoods = [np.array([int(d) for d in f'{x:08b}'])[::-1] for x in range(256)]
+    cn_lut = np.array([compute_crossing_number(x) for x in all_8_neighborhoods]).astype(np.uint8)
+
+    skeleton01 = np.where(img_line != 0, 1, 0).astype(np.uint8)
+    cn = cv2.LUT(skeleton01, cn_lut)
+    cn[img_line == 0] = 0
+
+
+    minutiae = [(x, y) for y, x in zip(*np.where(np.isin(cn, [1,3])))]
+    print(minutiae)
+    for x, y in minutiae:
+        cv2.drawMarker(img, (x, y), (255, 0, 0), cv2.MARKER_CROSS, 8)
+
+    showImage(img)
+    for each in minutiae:
+        for each1 in minutiae:
+            if each == each1:
+                continue
+            dx = each[0] - each1[0]
+            dy = each[1] - each1[1]
+            distance = dx * dx + dy * dy
+            if distance < 10*10 :
+                cv2.line(img_line,each,each1,(255,255,0),5)
+
+    showImage(img_line)
+    return  img_line
+
+
 
 def PreImage(img):
     roi_main_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     th2 = cv2.adaptiveThreshold(roi_main_gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 11, 2)
-    kernel = np.ones((2, 2), np.uint8)
+    kernel = np.ones((3, 3), np.uint8)
     opening = cv2.morphologyEx(th2, cv2.MORPH_OPEN, kernel)
-    showImage(opening)
-
+    # showImage(opening)
+    #
     sobel_demo(opening)
+
+
+
+def getLen(img):
+    img_line = cv2.ximgproc.thinning(img, thinningType=cv2.ximgproc.THINNING_GUOHALL)
+    contours, _ = cv2.findContours(img_line, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    maxLen = -1
+    ci_index = 0
+    for index, each in enumerate(contours) :
+        perimeter = cv2.arcLength(each, True)
+        if perimeter > maxLen:
+            maxLen = perimeter
+            ci_index = index
+
+    userName = "cqh_test"
+    ImagePath = "../../../image/{}".format(userName + "_roi_5_out.jpg")
+    img1 = cv2.imread(ImagePath)
+
+    contour = cv2.drawContours(img1, [contours[ci_index]], 0, (0, 255, 0), 3)
+
+
+
+
+    showImage(img1)
+
+
+
+
 
     # scharr_demo(opening)
 
