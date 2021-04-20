@@ -16,7 +16,22 @@ class ThenarFeature(object):
         th2 = cv2.adaptiveThreshold(roi_main_gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 11, 2)
         kernel = np.ones((3, 3), np.uint8)
         closing = cv2.morphologyEx(th2, cv2.MORPH_CLOSE, kernel)
+
+        nccomps = cv2.connectedComponentsWithStats(closing)
+        stats = nccomps[2]
+        maxistat = -1
+        istatt = []
+        for istat in stats:
+            if maxistat < istat[4]:
+                maxistat = istat[4]
+                istatt = istat
+
+            if istat[4] < 200:
+                cv2.rectangle(closing, tuple(istat[0:2]), tuple(istat[0:2] + istat[2:4]), 0, thickness=-1)
+
         skeleton = cv2.ximgproc.thinning(closing, thinningType=cv2.ximgproc.THINNING_GUOHALL)
+
+
         self.pre_themar = skeleton
 
 

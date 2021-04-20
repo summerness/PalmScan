@@ -25,7 +25,7 @@ class ROI(object):
         global ImgSavePath
         ImgSavePath = ImagePath.replace(".jpg", "")
         points = []
-        img_rows, img_cols, _ = self.contour.shape
+        # img_rows, img_cols, _ = self.contour.shape
         hull = cv2.convexHull(contour, returnPoints=False)
         defects = cv2.convexityDefects(contour, hull)  # 返回的前三个值是点在轮廓中的索引
         defects = defects[:, 0, :]
@@ -103,9 +103,9 @@ class ROI(object):
         scp = self.contourSkin.copy()
         cv2.polylines(scp, [p], True, (0, 255, 255), 3)
         cv2.imwrite("{0}_roi_5.jpg".format(ImgSavePath), scp)
-        mask = np.zeros(self.skin.copy().shape, dtype=np.uint8)
-        mask2 = cv2.fillPoly(mask, [p], (255, 255, 255))
-        out = cv2.bitwise_and(self.skin.copy(), mask2)
+        # mask = np.zeros(self.skin.copy().shape, dtype=np.uint8)
+        # mask2 = cv2.fillPoly(mask, [p], (255, 255, 255))
+        # out = cv2.bitwise_and(self.skin.copy(), mask2)
         xp = []
         yp = []
         for each in [p1, p2, p4, p3]:
@@ -116,29 +116,33 @@ class ROI(object):
 
     def roi_small_thenar(self):
         x = 0
+        y = 0
         for each in self.points:
-            if each[0] == self.x[5]:
+            if each[0] == self.x[4]:
                 x = each[0]
-        y = self.main_point[0][1]
+            if each[0] == self.x[1]:
+                y = each[1]
+
+        # center_y = ((self.main_point[1][1] - self.main_point[0][1]) / 2 + self.main_point[0][1])
         p1 = (x, y)
-        p2 = (self.main_point[1][0], self.main_point[0][1])
+        p2 = (self.main_point[1][0], y)
+
         p3 = self.main_point[1]
         y = self.main_point[1][1]
         center_x = ((self.main_point[1][0] - self.main_point[0][0]) / 2 + self.main_point[0][0])
-        x1 = int(center_x * 0.875)
-        p4 = (x1, y)
+        p4 = (center_x, y)
         p = np.array([p1, p2, p3, p4], np.int32)
         scp = self.contourSkin.copy()
         cv2.polylines(scp, [p], True, (0, 255, 255), 3)
         cv2.imwrite("{0}_roi_small_thenar.jpg".format(ImgSavePath), scp)
-        mask = np.zeros(self.skin.copy().shape, dtype=np.uint8)
-        mask2 = cv2.fillPoly(mask, [p], (255, 255, 255))
-        out = cv2.bitwise_and(self.skin.copy(), mask2)
+        # mask = np.zeros(self.skin.copy().shape, dtype=np.uint8)
+        # mask2 = cv2.fillPoly(mask, [p], (255, 255, 255))
+        # out = cv2.bitwise_and(self.skin.copy(), mask2)
         xp = []
         yp = []
         for each in [p1, p2, p4, p3]:
-            xp.append(each[0])
-            yp.append(each[1])
+            xp.append(int(each[0]))
+            yp.append(int(each[1]))
         out1 = self.skin.copy()[min(yp):max(yp), min(xp):max(xp), :]
         cv2.imwrite("{0}_roi_small_thenar_out.jpg".format(ImgSavePath), out1)
 

@@ -48,7 +48,7 @@ class Roi5Feature(object):
 
 
     def getLenAndDraw(self):
-        contours, _ = cv2.findContours(self.fix_line_img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        contours, _ = cv2.findContours(self.fix_line_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         maxLen = -1
         ci_index = 0
         for index, each in enumerate(contours):
