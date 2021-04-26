@@ -1,11 +1,11 @@
 import numpy as np
 import cv2
-from core.tools import showImage
+
 class ColorFeature(object):
 
-    def __init__(self, mainP, imageName):
+    def __init__(self, mainP):
         self.mainP = mainP
-        self.ImageName = imageName
+
 
     def GetColor(self):
         # B, G, R = cv2.split(self.mainP)
@@ -43,9 +43,9 @@ class ColorFeature(object):
             average_h = average_h - 0.6
 
         self.color = (average_h,average_s,average_g)
-
+        return self.getVote()
     def toVote(self,r,v,z):
-        i = 1
+        i = 8
         for each in v:
             f = i * z
             k = each[0]
@@ -54,7 +54,7 @@ class ColorFeature(object):
                 r[k] = f
             else:
                 r[k] = r.get(k) + f
-            i += 1
+            i = i -1
 
         return r
 
@@ -79,6 +79,12 @@ class ColorFeature(object):
         hs = sorted(hm.items(), key=lambda item: item[1])
         ss = sorted(sm.items(), key=lambda item: item[1])
         ms = sorted(gm.items(), key=lambda item: item[1])
+        vote = {}
+        vote = self.toVote(vote,hs,2)
+        vote = self.toVote(vote, ss, 2)
+        vote = self.toVote(vote,ms,1)
+        v = sorted(vote.items(), key=lambda item: item[1])
+        return v
 
 
 
@@ -86,12 +92,11 @@ class ColorFeature(object):
 
 
 
-
-
-if __name__ == '__main__':
-    userName = "cqh_test"
-    ImagePath = "../../../image/{}".format(userName + "_roi_main_out.jpg")
-    img = cv2.imread(ImagePath)
-    t = ColorFeature(img, userName)
-    t.GetColor()
-    t.vote()
+#
+# if __name__ == '__main__':
+#     userName = "cqh_test"
+#     ImagePath = "../../../image/{}".format(userName + "_roi_main_out.jpg")
+#     img = cv2.imread(ImagePath)
+#     t = ColorFeature(img, userName)
+#     t.GetColor()
+#     t.getVote()

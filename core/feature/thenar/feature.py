@@ -1,11 +1,12 @@
 from core.tools import *
 import numpy as np
-from settings.setting import API_IMG_PATH
+
 
 class ThenarFeature(object):
-    def __init__(self,thenar,imageName):
+    def __init__(self,thenar,full_path,file_name):
         self.thenar = thenar
-        self.ImageName = imageName
+        self.FullPath = full_path
+        self.imgName = file_name
 
 
     def compute_crossing_number(self,values):
@@ -49,7 +50,7 @@ class ThenarFeature(object):
         thenar = self.thenar.copy()
         for x, y in minutiae:
             cv2.drawMarker(thenar, (x, y), (0, 255, 0), cv2.MARKER_CROSS, 8)
-        cv2.imwrite("{}/{}_thenar_cross.jpg".format(API_IMG_PATH,self.ImageName), thenar)
+        cv2.imwrite("{}/{}_thenar_draw.jpg".format(self.FullPath,self.imgName), thenar)
         return len(minutiae)
 
 

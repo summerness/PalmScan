@@ -1,11 +1,12 @@
 import cv2
 import numpy as np
-from settings.setting import API_IMG_PATH
+
 
 class Contour(object):
-    def __init__(self, ImageName):
-        self.ImageName = ImageName
-        self.ImagePath = "{}/{}.jpg".format(API_IMG_PATH,ImageName)
+    def __init__(self, imageName, imagePath, fullPath):
+        self.ImageName = imageName
+        self.ImagePath = imagePath
+        self.FullPath = fullPath
         self.img = cv2.imread(self.ImagePath)
 
     # 某些论文中提及的简单方式提取，也可使用别的优化
@@ -18,7 +19,7 @@ class Contour(object):
         kernel = np.ones((57, 57), np.uint8)
         opening = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
         skin = cv2.bitwise_and(self.img, self.img, mask=opening)
-        cv2.imwrite("{}/{}_skin.jpg".format(API_IMG_PATH,self.ImageName), skin)
+        cv2.imwrite("{}/{}_skin.jpg".format(self.FullPath, self.ImageName), skin)
         return skin, opening
 
     def drawContour(self):
@@ -39,12 +40,11 @@ class Contour(object):
                     ci = i
             largest_contour = contours[ci]
             contour = cv2.drawContours(final_Contour, [largest_contour], 0, (0, 255, 0), 3)
-            cv2.imwrite("{}/{}_contour.jpg".format(API_IMG_PATH,self.ImageName), final_Contour)
+            cv2.imwrite("{}/{}_contour.jpg".format(self.FullPath, self.ImageName), final_Contour)
             contourSkin = cv2.drawContours(skin, [largest_contour], 0, (0, 255, 0), 3)
-            cv2.imwrite("{}/{}_contour_skin.jpg".format(API_IMG_PATH,self.ImageName), skin)
+            cv2.imwrite("{}/{}_contour_skin.jpg".format(self.FullPath, self.ImageName), skin)
             return largest_contour, skinc, contour, contourSkin
 
-
-if __name__ == '__main__':
-    c = Contour("cqh_test")
-    c.drawContour()
+# if __name__ == '__main__':
+#     c = Contour("cqh_test")
+#     c.drawContour()

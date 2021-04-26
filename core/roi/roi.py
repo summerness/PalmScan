@@ -2,7 +2,6 @@ import cv2
 from core.contour.contour import Contour
 from core.tools import *
 import numpy as np
-from settings.setting import API_IMG_PATH
 
 
 class ROI(object):
@@ -19,9 +18,9 @@ class ROI(object):
         k = (p1[1] - p0[1]) / (p1[0] - p0[0])
         return k
 
-    def roi(self, contour, ImageName):
+    def roi(self, contour, imageName, fullPath):
         global ImagePath
-        ImagePath = "{}/{}.jpg".format(API_IMG_PATH, ImageName)
+        ImagePath = "{}/{}.jpg".format(fullPath, imageName)
         global ImgSavePath
         ImgSavePath = ImagePath.replace(".jpg", "")
         points = []
@@ -75,6 +74,7 @@ class ROI(object):
         out = self.skin.copy()[top_left[1]:bottom_right[1], top_left[0]:bottom_right[0], :]
         cv2.imwrite("{0}_roi_main_out.jpg".format(ImgSavePath), out)
         self.main_point = [top_left, bottom_right]
+        return out
 
     def roi_thenar(self):
         top_left = (min(self.x) + 7, max(self.y) + 7)
@@ -85,6 +85,7 @@ class ROI(object):
         cv2.imwrite("{0}_roi_thenar.jpg".format(ImgSavePath), scp)
         out = self.skin.copy()[top_left[1]:bottom_right[1], top_left[0]:bottom_right[0], :]
         cv2.imwrite("{0}_roi_thenar_out.jpg".format(ImgSavePath), out)
+        return out
 
     def roi_5(self):
         p1 = p2 = (0, 0)
@@ -113,6 +114,7 @@ class ROI(object):
             yp.append(each[1])
         out1 = self.skin.copy()[min(yp):max(yp), min(xp):max(xp), :]
         cv2.imwrite("{0}_roi_5_out.jpg".format(ImgSavePath), out1)
+        return out1
 
     def roi_small_thenar(self):
         x = 0
@@ -145,6 +147,7 @@ class ROI(object):
             yp.append(int(each[1]))
         out1 = self.skin.copy()[min(yp):max(yp), min(xp):max(xp), :]
         cv2.imwrite("{0}_roi_small_thenar_out.jpg".format(ImgSavePath), out1)
+        return out1
 
     def roi_7(self):
         y_min = 0
@@ -162,6 +165,7 @@ class ROI(object):
         out = self.skin.copy()[top_left[1]:bottom_right[1], top_left[0]:bottom_right[0], :]
         cv2.imwrite("{0}_roi_7_out.jpg".format(ImgSavePath), out)
         self.main_point = [top_left, bottom_right]
+        return out
 
     def roi9(self):
         pass
@@ -173,15 +177,14 @@ class ROI(object):
         x_min = self.points[2][0]
         y_min = self.points[2][1]
 
-
-if __name__ == '__main__':
-    userName = "cqh_test"
-    c = Contour(userName)
-    ct, skin, contour, contourSkin = c.drawContour()
-    r = ROI(contour, skin, contourSkin)
-    r.roi(ct, userName)
-    r.roi_main(ct)
-    r.roi_thenar()
-    r.roi_small_thenar()
-    r.roi_5()
-    r.roi_7()
+# if __name__ == '__main__':
+#     userName = "cqh_test"
+#     c = Contour(userName)
+#     ct, skin, contour, contourSkin = c.drawContour()
+#     r = ROI(contour, skin, contourSkin)
+#     r.roi(ct, userName)
+#     r.roi_main(ct)
+#     r.roi_thenar()
+#     r.roi_small_thenar()
+#     r.roi_5()
+#     r.roi_7()

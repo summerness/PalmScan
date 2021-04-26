@@ -1,12 +1,13 @@
 
 from core.tools import *
 import numpy as np
-from settings.setting import API_IMG_PATH
+
 
 class Roi5Feature(object):
-    def __init__(self,roi5,imageName):
+    def __init__(self,roi5,full_path,file_name):
         self.roi5 = roi5
-        self.ImageName = imageName
+        self.FullPath = full_path
+        self.imgName = file_name
 
     def compute_crossing_number(self, values):
         return np.count_nonzero(values < np.roll(values, -1))
@@ -59,17 +60,18 @@ class Roi5Feature(object):
 
         if self.roi5.shape[0] *0.6 <= maxLen:
             cv2.drawContours(self.roi5, [contours[ci_index]], 0, (0, 255, 0), 3)
-            showImage(self.roi5)
+            cv2.imwrite("{}/{}_roi5_draw.jpg".format(self.FullPath, self.imgName), self.roi5)
             return True
+        cv2.imwrite("{}/{}_roi5_draw.jpg".format(self.FullPath, self.imgName), self.roi5)
         return False
 
 
 
-if __name__ == '__main__':
-    userName = "cqh_test"
-    ImagePath = "../../../image/{}".format(userName + "_roi_5_out.jpg")
-    img = cv2.imread(ImagePath)
-    t = Roi5Feature(img, userName)
-    t.pre_image()
-    t.fix_line()
-    t.getLenAndDraw()
+# if __name__ == '__main__':
+#     userName = "cqh_test"
+#     ImagePath = "../../../image/{}".format(userName + "_roi_5_out.jpg")
+#     img = cv2.imread(ImagePath)
+#     t = Roi5Feature(img, userName)
+#     t.pre_image()
+#     t.fix_line()
+#     t.getLenAndDraw()
