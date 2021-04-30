@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, String, DateTime, func, Integer, Boolean, JSON
+from sqlalchemy import create_engine, Column, String, Text, Float, DateTime, Integer, Boolean, JSON
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import os
@@ -16,26 +16,43 @@ def to_dict(self):
 Base.to_dict = to_dict
 
 
-class User(Base):
-    __tablename__ = "user"
+class Image(Base):
+    __tablename__ = "image"
 
-    open_id = Column(String(255), primary_key=True)
-    create_time = Column(DateTime, server_default=func.now())
-
-
-class PInfo(Base):
-    __tablename__ = "p_info"
     id = Column(Integer, primary_key=True)
-    open_id = Column(String(255))
-    create_time = Column(DateTime, server_default=func.now())
-    img_path = Column(String(255))
-    img_name = Column(String(255))
-    img_full_path = Column(String(255))
+    open_id = Column(String)
+    create_time = Column(DateTime)
+    img_path = Column(String)
+    img_name = Column(String)
+    img_save_path = Column(String)
     is_complete = Column(Boolean)
     is_expire = Column(Boolean)
     complete_time = Column(DateTime)
     expire_time = Column(DateTime)
-    roi_main = Column(JSON)
-    roi_5 = Column(JSON)
-    s_thenar = Column(JSON)
-    thenar = Column(JSON)
+    report_code = Column(String)
+
+
+class Report(Base):
+    __tablename__ = "report"
+
+    code = Column(String, primary_key=True)
+    hand_success = Column(JSON)
+    score = Column(Float)
+    roi_main = Column(String)
+    roi_main_hsv = Column(String)
+    roi_main_color = Column(String)
+    roi_main_info = Column(Text)
+    roi_5 = Column(String)
+    roi_5_line = Column(String)
+    roi_5_exist = Column(Boolean)
+    roi_5_info = Column(Text)
+    roi_thenar = Column(String)
+    roi_thenar_threshold = Column(String)
+    roi_thenar_cross_count = Column(Integer)
+    roi_thenar_cross = Column(String)
+    roi_thenar_info = Column(Text)
+    roi_sthenar = Column(String)
+    roi_sthenar_threshold = Column(String)
+    roi_sthenar_line = Column(String)
+    roi_sthenar_line_info = Column(String)
+    roi_sthenar_line_exist = Column(Boolean)
