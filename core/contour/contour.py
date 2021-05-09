@@ -41,7 +41,7 @@ class Contour(object):
             largest_contour = contours[ci]
             contour = cv2.drawContours(final_Contour, [largest_contour], 0, (0, 255, 0), 3)
             cv2.imwrite("{}/{}_contour.jpg".format(self.ToSavePath, self.ImageName), final_Contour)
-            contourSkin = cv2.drawContours(skin, [largest_contour], 0, (0, 255, 0), 3)
+            contourSkin = cv2.drawContours(skin, [largest_contour], 0, (255, 255, 255), 3)
             cv2.imwrite("{}/{}_contour_skin.jpg".format(self.ToSavePath, self.ImageName), skin)
             return largest_contour, skinc, contour, contourSkin
 

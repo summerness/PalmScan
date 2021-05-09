@@ -10,6 +10,6 @@ class Application(tornado.web.Application):
 
 if __name__ == '__main__':
     application = Application()
-    http_server = tornado.httpserver.HTTPServer(application, xheaders=True, )
+    http_server = tornado.httpserver.HTTPServer(application, xheaders=True)
     http_server.listen(port=8888)
     tornado.ioloop.IOLoop.instance().start()

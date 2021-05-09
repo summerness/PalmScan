@@ -7,6 +7,7 @@ from core.contour import contour as cont
 from core.feature.thenar.feature import ThenarFeature
 from core.feature.roi_5.feature import Roi5Feature
 from core.feature.small_thenar.feature import SmallThenarFeature
+import uuid
 
 
 class BackServer(object):
@@ -28,45 +29,33 @@ class BackServer(object):
                 img_path,
                 to_save_path,
             )
-            #以下未做异常处理
-            #获取手部
+            # 以下未做异常处理
+            # 获取手部
             ct, skin, contour, contourSkin = c.drawContour()
+            SkinCImageName = "{}_contour_skin.jpg".format(img_name)  # 截出的手部图
             r = ROI(contour, skin, contourSkin)
             r.roi(ct, img_name, to_save_path)
-
-
             roi_main = r.roi_main(ct)
+            RoiMainImageName = "{}_roi_main".format(img_name)  # 手掌图片
             roi_thenar = r.roi_thenar()
+            RoiThenarImageName = "{0}_roi_thenar.jpg".format(img_name)  # 大鱼际图片
             roi_small_thenar = r.roi_small_thenar()
+            RoiSmallThenarImageName = "{0}_roi_small_thenar.jpg".format(img_name)  # 小鱼际图片
             roi_5 = r.roi_5()
-            roi_7 = r.roi_7()
-
-
+            Roi5ImageName = "{0}_roi_5.jpg".format(img_name)  # roi5图片
+            # roi_7 = r.roi_7()
             co = color.ColorFeature(roi_main)
             v_color = co.GetColor()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            code = str(uuid.uuid4())
             p = Image(
                 open_id=open_id,
                 img_path=img_path,
                 img_name=img_name,
-                img_save_path=save_path,
+                img_save_path=to_save_path,
+                report_code=code
             )
+
+
             session.add(p)
             session.commit()
             return p

@@ -69,7 +69,7 @@ class ROI(object):
         top_left = (x_min, y_min)
         bottom_right = (x_max, y_max)
         scp = self.contourSkin.copy()
-        cv2.rectangle(scp, top_left, bottom_right, (255, 255, 0), 3)
+        cv2.rectangle(scp, top_left, bottom_right, (255, 255, 255), 3)
         cv2.imwrite("{0}_roi_main.jpg".format(ImgSavePath), scp)
         out = self.skin.copy()[top_left[1]:bottom_right[1], top_left[0]:bottom_right[0], :]
         cv2.imwrite("{0}_roi_main_out.jpg".format(ImgSavePath), out)
@@ -81,7 +81,7 @@ class ROI(object):
         bottom_right = (
             int((self.main_point[1][0] - self.main_point[0][0]) / 2) + self.main_point[0][0], self.main_point[1][1])
         scp = self.contourSkin.copy()
-        cv2.rectangle(scp, top_left, bottom_right, (0, 255, 0), 3)
+        cv2.rectangle(scp, top_left, bottom_right, (255, 255, 255), 3)
         cv2.imwrite("{0}_roi_thenar.jpg".format(ImgSavePath), scp)
         out = self.skin.copy()[top_left[1]:bottom_right[1], top_left[0]:bottom_right[0], :]
         cv2.imwrite("{0}_roi_thenar_out.jpg".format(ImgSavePath), out)
@@ -102,7 +102,7 @@ class ROI(object):
         p4 = (x2, y)
         p = np.array([p1, p2, p4, p3], np.int32)
         scp = self.contourSkin.copy()
-        cv2.polylines(scp, [p], True, (0, 255, 255), 3)
+        cv2.polylines(scp, [p], True, (255, 255, 255), 3)
         cv2.imwrite("{0}_roi_5.jpg".format(ImgSavePath), scp)
         # mask = np.zeros(self.skin.copy().shape, dtype=np.uint8)
         # mask2 = cv2.fillPoly(mask, [p], (255, 255, 255))
@@ -135,7 +135,7 @@ class ROI(object):
         p4 = (center_x, y)
         p = np.array([p1, p2, p3, p4], np.int32)
         scp = self.contourSkin.copy()
-        cv2.polylines(scp, [p], True, (0, 255, 255), 3)
+        cv2.polylines(scp, [p], True, (255, 255, 255), 3)
         cv2.imwrite("{0}_roi_small_thenar.jpg".format(ImgSavePath), scp)
         # mask = np.zeros(self.skin.copy().shape, dtype=np.uint8)
         # mask2 = cv2.fillPoly(mask, [p], (255, 255, 255))
