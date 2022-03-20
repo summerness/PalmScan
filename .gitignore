@@ -1,2 +1,8 @@
 /venv
 /.idea
+/core/__pycache__
+/core/contour/__pycache__
+/core/feature/__pycache__
+/core/feature/gabor/__pycache__
+/core/roi/__pycache__
+/ui/resource/image

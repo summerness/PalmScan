@@ -60,10 +60,10 @@ class ThenarFeature(object):
 
 
 if __name__ == '__main__':
-    userName = "cqh_test"
-    ImagePath = "../../../image/{}".format(userName + "_roi_thenar_out.jpg")
+    userName = "wxf"
+    ImagePath = "../../image/{}".format(userName + "_roi_thenar_out.jpg")
     img = cv2.imread(ImagePath)
-    t = ThenarFeature(img,userName)
+    t = ThenarFeature(img,"../../image",userName)
     t.pre_image()
     t.draw_cross()
 

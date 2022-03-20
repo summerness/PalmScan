@@ -67,11 +67,11 @@ class Roi5Feature(object):
 
 
 
-# if __name__ == '__main__':
-#     userName = "cqh_test"
-#     ImagePath = "../../../image/{}".format(userName + "_roi_5_out.jpg")
-#     img = cv2.imread(ImagePath)
-#     t = Roi5Feature(img, userName)
-#     t.pre_image()
-#     t.fix_line()
-#     t.getLenAndDraw()
+if __name__ == '__main__':
+    userName = "wxf"
+    ImagePath = "../../image/{}".format(userName + "_roi_5_out.jpg")
+    img = cv2.imread(ImagePath)
+    t = Roi5Feature(img,"../image", userName)
+    t.pre_image()
+    t.fix_line()
+    t.getLenAndDraw()

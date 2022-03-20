@@ -2,7 +2,7 @@ import cv2
 from core.contour.contour import Contour
 from core.tools import *
 import numpy as np
-
+import os
 
 class ROI(object):
     def __init__(self, contour, skin, contourSkin):
@@ -18,7 +18,7 @@ class ROI(object):
         k = (p1[1] - p0[1]) / (p1[0] - p0[0])
         return k
 
-    def roi(self, contour, imageName, fullPath):
+    def roi(self, contour, imageName, fullPath, contour_skin):
         global ImagePath
         ImagePath = "{}/{}.jpg".format(fullPath, imageName)
         global ImgSavePath
@@ -45,7 +45,7 @@ class ROI(object):
             cv2.circle(self.contour, far, 5, [0, 0, 255], -1)
             cv2.circle(self.contourSkin, tuple(contour[left][0]), 5, [255, 255, 255], -1)
             cv2.circle(self.contourSkin, tuple(contour[right][0]), 5, [0, 255, 255], -1)
-        cv2.imwrite("{0}_contour_anchor.jpg".format(ImgSavePath), contourSkin)
+        cv2.imwrite("{0}_contour_anchor.jpg".format(ImgSavePath), contour_skin)
         self.points = points
         x = []
         y = []
@@ -177,14 +177,16 @@ class ROI(object):
         x_min = self.points[2][0]
         y_min = self.points[2][1]
 
-# if __name__ == '__main__':
-#     userName = "cqh_test"
-#     c = Contour(userName)
-#     ct, skin, contour, contourSkin = c.drawContour()
-#     r = ROI(contour, skin, contourSkin)
-#     r.roi(ct, userName)
-#     r.roi_main(ct)
-#     r.roi_thenar()
-#     r.roi_small_thenar()
-#     r.roi_5()
-#     r.roi_7()
+if __name__ == '__main__':
+    userName = "wxf"
+    imagePath = "../image/{}.jpg".format(userName)
+    toSavePath = "image"
+    c = Contour(userName,imagePath,toSavePath)
+    ct, skin, contour, contourSkin = c.drawContour()
+    r = ROI(contour, skin, contourSkin)
+    r.roi(ct, userName,"../image")
+    r.roi_main(ct)
+    r.roi_thenar()
+    r.roi_small_thenar()
+    r.roi_5()
+    r.roi_7()

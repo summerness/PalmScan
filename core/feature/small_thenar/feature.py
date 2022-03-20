@@ -88,10 +88,10 @@ class SmallThenarFeature(object):
 
 
 if __name__ == '__main__':
-    userName = "cqh_test"
-    ImagePath = "../../../image/{}".format(userName + "_roi_small_thenar_out.jpg")
+    userName = "wxf"
+    ImagePath = "../../image/{}".format(userName + "_roi_small_thenar_out.jpg")
     img = cv2.imread(ImagePath)
-    t = SmallThenarFeature(img, userName)
+    t = SmallThenarFeature(img, "../../image",userName)
     t.pre_image()
 
 

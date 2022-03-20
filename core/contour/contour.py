@@ -45,6 +45,9 @@ class Contour(object):
             cv2.imwrite("{}/{}_contour_skin.jpg".format(self.ToSavePath, self.ImageName), skin)
             return largest_contour, skinc, contour, contourSkin
 
-# if __name__ == '__main__':
-#     c = Contour("cqh_test")
-#     c.drawContour()
+if __name__ == '__main__':
+    uu = "wxf"
+    imagePath = "../image/{}.jpg".format(uu)
+    toSavePath = "../image"
+    c = Contour(uu,imagePath,toSavePath)
+    c.drawContour()
